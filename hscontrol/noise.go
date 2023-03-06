@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/juanfont/headscale/loghandler"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -104,7 +105,7 @@ func (h *Headscale) NoiseUpgradeHandler(
 	}
 
 	noiseServer.httpBaseConfig = &http.Server{
-		Handler:           router,
+		Handler:           loghandler.LogHandler("ts2021", router),
 		ReadHeaderTimeout: HTTPReadTimeout,
 	}
 	noiseServer.http2Server = &http2.Server{}

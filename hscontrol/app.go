@@ -27,6 +27,7 @@ import (
 	"github.com/juanfont/headscale/hscontrol/policy"
 	"github.com/juanfont/headscale/hscontrol/types"
 	"github.com/juanfont/headscale/hscontrol/util"
+	"github.com/juanfont/headscale/loghandler"
 	"github.com/patrickmn/go-cache"
 	zerolog "github.com/philip-bui/grpc-zerolog"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -628,7 +629,7 @@ func (h *Headscale) Serve() error {
 
 	httpServer := &http.Server{
 		Addr:        h.cfg.Addr,
-		Handler:     router,
+		Handler:     loghandler.LogHandler("old", router),
 		ReadTimeout: HTTPReadTimeout,
 		// Go does not handle timeouts in HTTP very well, and there is
 		// no good way to handle streaming timeouts, therefore we need to

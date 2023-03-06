@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/juanfont/headscale/hscontrol/util"
+	"github.com/juanfont/headscale/loghandler"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"tailscale.com/tailcfg"
@@ -47,6 +49,10 @@ func (ns *noiseServer) NoisePollNetMapHandler(
 	}
 
 	ns.nodeKey = mapRequest.NodeKey
+
+	if l, _ := req.Context().Value(loghandler.LogHandlerCtxKey).(*loghandler.LogHandlerCtx); l != nil {
+		l.Node = util.NodePublicKeyStripPrefix(mapRequest.NodeKey)
+	}
 
 	machine, err := ns.headscale.db.GetMachineByAnyKey(
 		ns.conn.Peer(),

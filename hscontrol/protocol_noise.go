@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/juanfont/headscale/hscontrol/util"
+	"github.com/juanfont/headscale/loghandler"
 	"github.com/rs/zerolog/log"
 	"tailscale.com/tailcfg"
 )
@@ -39,6 +41,10 @@ func (ns *noiseServer) NoiseRegistrationHandler(
 	}
 
 	ns.nodeKey = registerRequest.NodeKey
+
+	if l, _ := req.Context().Value(loghandler.LogHandlerCtxKey).(*loghandler.LogHandlerCtx); l != nil {
+		l.Node = util.NodePublicKeyStripPrefix(registerRequest.NodeKey)
+	}
 
 	ns.headscale.handleRegisterCommon(writer, req, registerRequest, ns.conn.Peer(), true)
 }
